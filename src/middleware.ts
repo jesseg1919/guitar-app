@@ -33,13 +33,19 @@ export default withAuth(
         if (pathname.startsWith("/api/grades")) return true;
         if (pathname.startsWith("/api/songs")) return true;
         if (pathname.startsWith("/api/chords")) return true;
+        if (pathname.startsWith("/api/modules")) return true;
+        if (pathname.startsWith("/api/badges")) return true;
 
         // Guest-accessible routes (Grade 1 lessons, chord library browsing)
         if (pathname === "/lessons") return true;
+        if (pathname.startsWith("/lessons/")) return true;
         if (pathname === "/chords") return true;
+        if (pathname.startsWith("/chords/")) return true;
         if (pathname === "/songs") return true;
+        if (pathname.startsWith("/songs/")) return true;
         if (pathname === "/practice") return true;
         if (pathname.startsWith("/practice/")) return true;
+        if (pathname === "/achievements") return true;
 
         // Everything else requires authentication
         return !!token;

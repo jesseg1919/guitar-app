@@ -50,30 +50,37 @@ export async function GET(
 
     let userProgress = null;
 
-    if (session?.user?.id) {
-      userProgress = await prisma.userModuleProgress.findUnique({
-        where: {
-          userId_moduleId: {
-            userId: session.user.id,
-            moduleId,
-          },
-        },
-      });
+    const userId = (session?.user as { id?: string })?.id;
 
-      // Record that user viewed this module
-      if (userProgress) {
-        await prisma.userModuleProgress.update({
-          where: { id: userProgress.id },
-          data: { lastViewedAt: new Date() },
-        });
-      } else {
-        userProgress = await prisma.userModuleProgress.create({
-          data: {
-            userId: session.user.id,
-            moduleId,
-            lastViewedAt: new Date(),
+    if (userId && typeof userId === "string" && userId.length > 0) {
+      try {
+        userProgress = await prisma.userModuleProgress.findUnique({
+          where: {
+            userId_moduleId: {
+              userId,
+              moduleId,
+            },
           },
         });
+
+        // Record that user viewed this module
+        if (userProgress) {
+          await prisma.userModuleProgress.update({
+            where: { id: userProgress.id },
+            data: { lastViewedAt: new Date() },
+          });
+        } else {
+          userProgress = await prisma.userModuleProgress.create({
+            data: {
+              userId,
+              moduleId,
+              lastViewedAt: new Date(),
+            },
+          });
+        }
+      } catch (progressError) {
+        console.error("Error tracking module progress:", progressError);
+        // Don't fail the entire request if progress tracking fails
       }
     }
 

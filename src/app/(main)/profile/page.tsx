@@ -45,6 +45,17 @@ export default function ProfilePage() {
   const [passwordMsg, setPasswordMsg] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
+  // Must call useQuery before any conditional returns (React Rules of Hooks)
+  const { data: badges = [] } = useQuery<Badge[]>({
+    queryKey: ["badges"],
+    queryFn: async () => {
+      const res = await fetch("/api/badges");
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: isAuthenticated,
+  });
+
   if (isLoading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
@@ -103,15 +114,6 @@ export default function ProfilePage() {
       setPasswordError("Something went wrong.");
     }
   };
-
-  const { data: badges = [] } = useQuery<Badge[]>({
-    queryKey: ["badges"],
-    queryFn: async () => {
-      const res = await fetch("/api/badges");
-      if (!res.ok) return [];
-      return res.json();
-    },
-  });
 
   const earnedBadges = badges.filter((b) => b.earned);
 
