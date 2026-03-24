@@ -29,6 +29,11 @@ export default withAuth(
         // API auth routes — always allowed
         if (pathname.startsWith("/api/auth")) return true;
 
+        // Public API routes — data for guest-accessible pages
+        if (pathname.startsWith("/api/grades")) return true;
+        if (pathname.startsWith("/api/songs")) return true;
+        if (pathname.startsWith("/api/chords")) return true;
+
         // Guest-accessible routes (Grade 1 lessons, chord library browsing)
         if (pathname === "/lessons") return true;
         if (pathname === "/chords") return true;
