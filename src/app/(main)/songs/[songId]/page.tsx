@@ -18,6 +18,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useState } from "react";
+import ChordProgressionPlayer from "@/components/lessons/ChordProgressionPlayer";
 
 interface SongDetail {
   id: string;
@@ -204,6 +205,19 @@ export default function SongDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Chord Progression Player */}
+      {song.chordsUsed.length > 0 && song.bpm && (
+        <div className="mb-8">
+          <ChordProgressionPlayer
+            progression={song.chordsUsed.map((chord) => ({
+              chord,
+              beats: 4,
+            }))}
+            defaultBpm={song.bpm}
+          />
+        </div>
+      )}
 
       <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
         {/* Main Column — Chord Sheet */}
