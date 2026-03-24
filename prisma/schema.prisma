@@ -117,6 +117,10 @@ model Module {
   // Linked resources
   chordsIntroduced String[] // Chord IDs introduced in this module
 
+  // Chord progression player data
+  chordProgression Json?   // Array of { chord, beats } objects for the progression player
+  bpm              Int     @default(80) // Default tempo for the progression player
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

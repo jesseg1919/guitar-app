@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import ChordProgressionPlayer from "@/components/lessons/ChordProgressionPlayer";
 
 interface ModuleData {
   id: string;
@@ -31,6 +32,8 @@ interface ModuleData {
   keyTakeaways: string[];
   practiceChecklist: string[];
   chordsIntroduced: string[];
+  chordProgression: { chord: string; beats: number }[] | null;
+  bpm: number;
   grade: {
     id: string;
     number: number;
@@ -204,6 +207,16 @@ export default function ModulePage() {
       ) : (
         <div className="mb-8 flex aspect-video items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800">
           <p className="text-neutral-400">Video coming soon</p>
+        </div>
+      )}
+
+      {/* Chord Progression Player */}
+      {module.chordProgression && module.chordProgression.length > 0 && (
+        <div className="mb-8">
+          <ChordProgressionPlayer
+            progression={module.chordProgression}
+            defaultBpm={module.bpm}
+          />
         </div>
       )}
 

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Module" ADD COLUMN "chordProgression" JSONB,
+ADD COLUMN "bpm" INTEGER NOT NULL DEFAULT 80;
