@@ -1,0 +1,411 @@
+// Guitar Learning App - Prisma Schema
+// Inspired by JustinGuitar's structured curriculum approach
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Authentication (NextAuth) ───────────────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Core User ───────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+
+  // Guitar learning profile
+  currentGradeId       String?
+  xp                   Int      @default(0)
+  level                Int      @default(1)
+  streakCount          Int      @default(0)
+  longestStreak        Int      @default(0)
+  lastPracticeAt       DateTime?
+  totalPracticeMinutes Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  currentGrade     Grade?              @relation("CurrentGrade", fields: [currentGradeId], references: [id])
+  accounts         Account[]
+  sessions         Session[]
+  moduleProgress   UserModuleProgress[]
+  chordProgress    UserChordProgress[]
+  favorites        UserFavorite[]
+  practiceSessions PracticeSession[]
+  badges           UserBadge[]
+  practiceRoutines PracticeRoutine[]
+  songPlaylists    Playlist[]
+}
+
+// ─── Curriculum: Grades & Modules ────────────────────────────────────────────
+
+model Grade {
+  id          String  @id @default(cuid())
+  number      Int     @unique
+  title       String  // e.g., "Grade 1 - The Beginner's Journey"
+  description String  @db.Text
+  imageUrl    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  modules      Module[]
+  currentUsers User[]   @relation("CurrentGrade")
+}
+
+model Module {
+  id              String  @id @default(cuid())
+  gradeId         String
+  title           String  // e.g., "Your First Chords: A & D"
+  description     String  @db.Text
+  order           Int     // Order within the grade
+  videoUrl        String?
+  thumbnailUrl    String?
+  durationMinutes Int     @default(0)
+
+  // Lesson content
+  contentMarkdown   String   @db.Text   // Rich lesson content
+  keyTakeaways      String[]            // Array of key points
+  practiceChecklist String[]            // Things to practice after this lesson
+
+  // Linked resources
+  chordsIntroduced String[] // Chord IDs introduced in this module
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  grade        Grade                @relation(fields: [gradeId], references: [id], onDelete: Cascade)
+  userProgress UserModuleProgress[]
+
+  @@unique([gradeId, order])
+}
+
+model UserModuleProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  moduleId    String
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  lastViewedAt DateTime @default(now())
+
+  // Track video watch progress (0.0 to 1.0)
+  videoProgress Float @default(0)
+
+  // Track which practice checklist items are checked off
+  checklistCompleted String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleId])
+}
+
+// ─── Chord Library ───────────────────────────────────────────────────────────
+
+model Chord {
+  id         String          @id @default(cuid())
+  name       String          // e.g., "A Major", "E Minor", "F# Minor"
+  shortName  String          // e.g., "A", "Em", "F#m"
+  type       ChordType
+  difficulty ChordDifficulty
+
+  // Fretboard data as JSON
+  // { strings: [fret, fret, ...], fingers: [finger, ...], barres: [...], baseFret: 1, muted: [...] }
+  fretboardData Json
+
+  audioUrl String? // Audio of the chord being strummed
+
+  // Teaching content
+  tips        String   @db.Text   // Tips for clean fretting
+  commonSongs String[]            // Song names that use this chord
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userProgress UserChordProgress[]
+}
+
+enum ChordType {
+  OPEN
+  BARRE
+  POWER
+  SEVENTH
+  MINOR_SEVENTH
+  MAJOR_SEVENTH
+  SUSPENDED
+  DIMINISHED
+  AUGMENTED
+  ADD
+  SLASH
+}
+
+enum ChordDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+model UserChordProgress {
+  id      String      @id @default(cuid())
+  userId  String
+  chordId String
+  status  ChordStatus @default(LEARNING)
+
+  practiceCount     Int @default(0)
+  bestChangesPer60s Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chord Chord @relation(fields: [chordId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, chordId])
+}
+
+enum ChordStatus {
+  LEARNING
+  MASTERED
+}
+
+// ─── Song Library ────────────────────────────────────────────────────────────
+
+model Song {
+  id     String @id @default(cuid())
+  title  String
+  artist String
+
+  genre      SongGenre
+  difficulty SongDifficulty
+  decade     String? // e.g., "2000s", "1970s"
+
+  // Musical info
+  bpm           Int?
+  key           String?   // e.g., "G Major", "A Minor"
+  capoFret      Int?      // 0 = no capo
+  timeSignature String    @default("4/4")
+
+  // Chord chart content
+  chordsUsed       String[]          // Array of chord short names
+  strummingPattern String?           // e.g., "D DU UDU"
+  lyricsWithChords String   @db.Text // Formatted lyrics with chord markers
+  simplifiedChords String?  @db.Text // Beginner-friendly chord version
+
+  // External links
+  spotifyUrl String?
+  youtubeUrl String?
+
+  // Metadata
+  albumArt String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  favorites UserFavorite[]
+  playlists PlaylistSong[]
+}
+
+enum SongGenre {
+  ROCK
+  POP
+  COUNTRY
+  BLUES
+  FOLK
+  INDIE
+  ALTERNATIVE
+  CLASSIC_ROCK
+  PUNK
+  METAL
+  RNB
+  JAZZ
+  REGGAE
+  SINGER_SONGWRITER
+  OTHER
+}
+
+enum SongDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+model UserFavorite {
+  id     String @id @default(cuid())
+  userId String
+  songId String
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  song Song @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, songId])
+}
+
+model Playlist {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  songs PlaylistSong[]
+}
+
+model PlaylistSong {
+  id         String @id @default(cuid())
+  playlistId String
+  songId     String
+  order      Int
+
+  playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  song     Song     @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  @@unique([playlistId, songId])
+}
+
+// ─── Practice Sessions & Tools ───────────────────────────────────────────────
+
+model PracticeSession {
+  id     String @id @default(cuid())
+  userId String
+
+  type            PracticeType
+  durationMinutes Int
+  date            DateTime @default(now())
+
+  // Flexible JSON for tool-specific data
+  // e.g., { chordsUsed: ["A", "D"], changesCount: 45, bpm: 80 }
+  details Json?
+
+  score Int? // Performance metric (optional, depends on type)
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum PracticeType {
+  CHORD_CHANGE
+  STRUMMING
+  EAR_TRAINING
+  METRONOME
+  LESSON
+  SONG_PRACTICE
+  FREE_PRACTICE
+  DAILY_ROUTINE
+}
+
+model PracticeRoutine {
+  id     String @id @default(cuid())
+  userId String
+
+  name            String
+  durationMinutes Int
+  isDefault       Boolean @default(false)
+
+  // Routine steps as JSON array
+  // [{ type: "warmup", duration: 2, description: "..." }, ...]
+  steps Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── Gamification: Badges & Achievements ─────────────────────────────────────
+
+model Badge {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  description String
+  iconUrl     String?
+  category    BadgeCategory
+
+  // Criteria as JSON for flexible achievement conditions
+  // e.g., { type: "streak", threshold: 7 }
+  criteria Json
+
+  xpReward Int @default(0) // XP reward for earning this badge
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  users UserBadge[]
+}
+
+enum BadgeCategory {
+  MILESTONE
+  STREAK
+  PRACTICE
+  MASTERY
+  SOCIAL
+  SPECIAL
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+}
