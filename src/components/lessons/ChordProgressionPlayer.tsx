@@ -15,6 +15,8 @@ interface ChordProgressionPlayerProps {
   defaultBpm: number;
   lyricsWithChords?: string;
   audioUrl?: string | null;
+  /** Seconds of silence/pickup before beat 1 in the audio file */
+  audioStartOffset?: number;
 }
 
 // Chord colors for the bars
@@ -167,6 +169,7 @@ export default function ChordProgressionPlayer({
   defaultBpm,
   lyricsWithChords,
   audioUrl,
+  audioStartOffset = 0,
 }: ChordProgressionPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [bpm, setBpm] = useState(defaultBpm);
@@ -254,7 +257,9 @@ export default function ChordProgressionPlayer({
     // If we have audio playing, sync to its currentTime instead of our own timer
     if (songAudioRef.current && songLoaded && !songAudioRef.current.paused) {
       const audioTimeSec = songAudioRef.current.currentTime;
-      const audioTimeBeat = audioTimeSec / (60 / bpm); // convert to beat position
+      // Subtract startOffset so beat 0 aligns with when the music actually starts
+      const adjustedTime = Math.max(0, audioTimeSec - audioStartOffset);
+      const audioTimeBeat = adjustedTime / (60 / bpm); // convert to beat position
 
       // Find which step we should be on based on audio time
       let targetIdx = 0;
@@ -334,7 +339,7 @@ export default function ChordProgressionPlayer({
     }
 
     animFrameRef.current = requestAnimationFrame(animate);
-  }, [currentIndex, steps, msPerBeat, bpm, isLooping, playClick, songLoaded, stepStartBeats]);
+  }, [currentIndex, steps, msPerBeat, bpm, isLooping, playClick, songLoaded, stepStartBeats, audioStartOffset]);
 
   useEffect(() => {
     if (isPlaying) {

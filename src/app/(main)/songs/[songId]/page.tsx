@@ -268,6 +268,7 @@ export default function SongDetailPage() {
             defaultBpm={song.bpm}
             lyricsWithChords={song.lyricsWithChords}
             audioUrl={song.audioUrl}
+            audioStartOffset={song.audioUrl ? 1.95 : 0}
           />
         </div>
       )}
