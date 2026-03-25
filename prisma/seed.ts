@@ -1403,6 +1403,25 @@ const songs: any[] = [
     spotifyUrl: "https://open.spotify.com/track/example25",
     youtubeUrl: "https://youtube.com/watch?v=example25",
   },
+  {
+    title: "Mellow Yellow",
+    artist: "Donovan",
+    genre: "POP",
+    difficulty: "BEGINNER",
+    decade: "1960s",
+    bpm: 112,
+    key: "A Major",
+    capoFret: 0,
+    timeSignature: "4/4",
+    chordsUsed: ["A", "D", "E", "A7"],
+    strummingPattern: "D DU UDU",
+    lyricsWithChords:
+      "[A]I'm just mad about [D]Saffron\n[A]Saffron's mad about [E]me\n[A]I'm just mad about [D]Saffron\n[E]She's just mad about [A]me\n\n[A]They call me Mellow [D]Yellow\n[E]Quite rightly\n[A]They call me Mellow [D]Yellow\n[E]Quite rightly\n[A]They call me Mellow [D]Yellow\n\n[A]I'm just mad about [D]Fourteen\n[A]Fourteen's mad about [E]me\n[A]Got me mad about [D]Fourteen\n[E]She's just mad about [A]me\n\n[A]They call me Mellow [D]Yellow\n[E]Quite rightly\n[A]They call me Mellow [D]Yellow\n[E]Quite rightly\n[A]They call me Mellow [D]Yellow\n\n[A7]Born high forever [D]to fly\n[A7]Wind velocity [E]nil\n[A]They call me Mellow [D]Yellow\n[E]Quite [A]rightly",
+    simplifiedChords:
+      "[A]I'm just mad about [D]Saffron\n[A]Saffron's mad about [E]me\n[A]I'm just mad about [D]Saffron\n[E]She's just mad about [A]me\n\n[A]They call me Mellow [D]Yellow\n[E]Quite rightly\n[A]They call me Mellow [D]Yellow",
+    spotifyUrl: "https://open.spotify.com/track/3CxHrSfQzMOJjzFDRkfiXG",
+    youtubeUrl: "https://youtube.com/watch?v=yxEYFeMJce8",
+  },
 ];
 
 // ─── Badges (same as auto-seed definitions) ─────────────────────────────────
