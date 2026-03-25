@@ -1409,14 +1409,14 @@ const songs: any[] = [
     genre: "POP",
     difficulty: "BEGINNER",
     decade: "1960s",
-    bpm: 106,
+    bpm: 103,
     key: "D Major",
     capoFret: 0,
     timeSignature: "4/4",
     chordsUsed: ["D", "G", "A7"],
     strummingPattern: "D DU UDU",
     lyricsWithChords:
-      "[D]...\n[D]...\n[G]...\n[D]...\n[A7]...\n\n[D]I'm just mad about [G]Saffron\n[D]Saffron's mad about [A7]me\n[D]I'm just mad about [G]Saffron\n[A7]She's just mad about [D]me\n\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n\n[D]...\n[D]...\n[A7]...\n[A7]...\n\n[D]I'm just mad about [G]Fourteen\n[D]Fourteen's mad about [A7]me\n[D]Got me mad about [G]Fourteen\n[A7]She's just mad about [D]me\n\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n\n[D]Born high forever to fly\n[G]...\n[D]Wind velocity nil\n[A7]...\n[D]...\n[G]...\n[D]...\n[A7]...\n\n[D]I'm just mad about [G]Saffron\n[A7]She's just mad about [D]me\n[D]I'm just mad about [G]Saffron\n[A7]She's just mad about [D]me\n\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]Mellow [D]Yellow...\n[A7]Mellow [D]Yellow...",
+      "[D]...\n[D]...\n[G]...\n[A7]...\n\n[D]I'm just mad about [G]Saffron\n[D]Saffron's mad about [A7]me\n[D]I'm just mad about [G]Saffron\n[A7]She's just mad about [D]me\n\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n\n[D]...\n[D]...\n[A7]...\n[A7]...\n\n[D]I'm just mad about [G]Fourteen\n[D]Fourteen's mad about [A7]me\n[D]Got me mad about [G]Fourteen\n[A7]She's just mad about [D]me\n\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n\n[D]Born high forever to fly\n[G]...\n[D]Wind velocity nil\n[A7]...\n[D]...\n[G]...\n[D]...\n[A7]...\n\n[D]I'm just mad about [G]Saffron\n[A7]She's just mad about [D]me\n[D]I'm just mad about [G]Saffron\n[A7]She's just mad about [D]me\n\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly\n[A7]Mellow [D]Yellow...\n[A7]Mellow [D]Yellow...",
     simplifiedChords:
       "[D]I'm just mad about [G]Saffron\n[D]Saffron's mad about [A7]me\n[A7]They call me Mellow [D]Yellow\n[A7]Quite [D]rightly",
     spotifyUrl: "https://open.spotify.com/track/3CxHrSfQzMOJjzFDRkfiXG",
