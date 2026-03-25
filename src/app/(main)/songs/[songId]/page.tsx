@@ -216,6 +216,7 @@ export default function SongDetailPage() {
             }))}
             defaultBpm={song.bpm}
             lyricsWithChords={song.lyricsWithChords}
+            youtubeUrl={song.youtubeUrl}
           />
         </div>
       )}

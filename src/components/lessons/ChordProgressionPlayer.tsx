@@ -14,6 +14,7 @@ interface ChordProgressionPlayerProps {
   progression: ChordStep[];
   defaultBpm: number;
   lyricsWithChords?: string;
+  youtubeUrl?: string | null;
 }
 
 // Chord colors for the bars
@@ -154,10 +155,17 @@ function ChordDiagram({ chord }: { chord: string }) {
   );
 }
 
+// Extract YouTube video ID from URL
+function getYouTubeId(url: string): string | null {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : null;
+}
+
 export default function ChordProgressionPlayer({
   progression,
   defaultBpm,
   lyricsWithChords,
+  youtubeUrl,
 }: ChordProgressionPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [bpm, setBpm] = useState(defaultBpm);
@@ -284,6 +292,7 @@ export default function ChordProgressionPlayer({
   if (!steps || steps.length === 0) return null;
 
   const currentChord = steps[currentIndex]?.chord || "";
+  const currentColor = getChordColor(currentChord);
   const totalBeats = steps.reduce((sum, s) => sum + s.beats, 0);
   const elapsedBeats = steps.slice(0, currentIndex).reduce((sum, s) => sum + s.beats, 0) + barProgress * (steps[currentIndex]?.beats || 4);
   const overallProgress = (elapsedBeats / totalBeats) * 100;
@@ -294,97 +303,160 @@ export default function ChordProgressionPlayer({
   const endIdx = Math.min(steps.length, startIdx + VISIBLE_RANGE);
   const visibleSteps = steps.slice(startIdx, endIdx);
 
+  const ytId = youtubeUrl ? getYouTubeId(youtubeUrl) : null;
+
   return (
     <div className="overflow-hidden rounded-xl border border-neutral-800 bg-neutral-950">
-      {/* Scrolling chord bars area */}
-      <div ref={scrollRef} className="relative overflow-y-auto px-3 py-4 sm:px-5" style={{ maxHeight: "340px" }}>
-        <div className="flex flex-col gap-1">
-          {visibleSteps.map((step, vi) => {
-            const realIdx = startIdx + vi;
-            const isActive = realIdx === currentIndex;
-            const isPast = realIdx < currentIndex;
-            const color = getChordColor(step.chord);
+      {/* Main area: scrolling bars + large chord diagram sidebar */}
+      <div className="flex">
+        {/* Scrolling chord bars area */}
+        <div ref={scrollRef} className="relative flex-1 overflow-y-auto px-3 py-4 sm:px-5" style={{ maxHeight: "400px" }}>
+          <div className="flex flex-col gap-1">
+            {visibleSteps.map((step, vi) => {
+              const realIdx = startIdx + vi;
+              const isActive = realIdx === currentIndex;
+              const isPast = realIdx < currentIndex;
+              const color = getChordColor(step.chord);
 
-            return (
-              <div key={`${realIdx}-${step.chord}`} data-active={isActive ? "true" : undefined}>
-                {/* Chord bar row */}
-                <div
-                  className={cn(
-                    "flex items-center gap-2 sm:gap-3 transition-all duration-200",
-                    isActive ? "scale-[1.01]" : isPast ? "opacity-40" : "opacity-70"
-                  )}
-                  onClick={() => {
-                    setCurrentIndex(realIdx);
-                    setBarProgress(0);
-                    prevBeatRef.current = -1;
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  {/* Chord name badge */}
-                  <div className={cn(
-                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-black sm:h-9 sm:w-9 sm:text-sm",
-                    color.text,
-                    isActive && "ring-2 ring-white/40 ring-offset-1 ring-offset-neutral-950"
-                  )}>
-                    {step.chord}
-                  </div>
-
-                  {/* The bar */}
-                  <div className="relative flex-1 overflow-hidden rounded-full" style={{ height: "28px" }}>
-                    {/* Background bar */}
-                    <div className={cn("absolute inset-0 rounded-full", color.bg, isActive ? "opacity-90" : "opacity-50")} />
-
-                    {/* Progress fill (playhead) for active bar */}
-                    {isActive && (
-                      <div
-                        className="absolute inset-y-0 left-0 rounded-full bg-white/20"
-                        style={{ width: `${barProgress * 100}%`, transition: "none" }}
-                      />
+              return (
+                <div key={`${realIdx}-${step.chord}`} data-active={isActive ? "true" : undefined}>
+                  {/* Chord bar row */}
+                  <div
+                    className={cn(
+                      "flex items-center gap-2 sm:gap-3 transition-all duration-200",
+                      isActive ? "scale-[1.01]" : isPast ? "opacity-40" : "opacity-70"
                     )}
+                    onClick={() => {
+                      setCurrentIndex(realIdx);
+                      setBarProgress(0);
+                      prevBeatRef.current = -1;
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {/* Chord name badge */}
+                    <div className={cn(
+                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-black sm:h-9 sm:w-9 sm:text-sm",
+                      color.text,
+                      isActive && "ring-2 ring-white/40 ring-offset-1 ring-offset-neutral-950"
+                    )}>
+                      {step.chord}
+                    </div>
 
-                    {/* Playhead line */}
-                    {isActive && (
-                      <div
-                        className="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]"
-                        style={{ left: `${barProgress * 100}%`, transition: "none" }}
-                      />
-                    )}
+                    {/* The bar */}
+                    <div className="relative flex-1 overflow-hidden rounded-full" style={{ height: "28px" }}>
+                      {/* Background bar */}
+                      <div className={cn("absolute inset-0 rounded-full", color.bg, isActive ? "opacity-90" : "opacity-50")} />
 
-                    {/* Beat dots */}
-                    <div className="absolute inset-0 flex items-center justify-evenly px-3">
-                      {Array.from({ length: step.beats }).map((_, bi) => {
-                        const dotPosition = (bi + 0.5) / step.beats;
-                        const isLit = isActive && barProgress >= dotPosition;
-                        return (
-                          <div
-                            key={bi}
-                            className={cn(
-                              "h-2 w-2 rounded-full transition-all sm:h-2.5 sm:w-2.5",
-                              isActive
-                                ? isLit ? "bg-white scale-110" : color.dot + " opacity-60"
-                                : color.dot + " opacity-40"
-                            )}
-                          />
-                        );
-                      })}
+                      {/* Progress fill (playhead) for active bar */}
+                      {isActive && (
+                        <div
+                          className="absolute inset-y-0 left-0 rounded-full bg-white/20"
+                          style={{ width: `${barProgress * 100}%`, transition: "none" }}
+                        />
+                      )}
+
+                      {/* Playhead line */}
+                      {isActive && (
+                        <div
+                          className="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]"
+                          style={{ left: `${barProgress * 100}%`, transition: "none" }}
+                        />
+                      )}
+
+                      {/* Beat dots */}
+                      <div className="absolute inset-0 flex items-center justify-evenly px-3">
+                        {Array.from({ length: step.beats }).map((_, bi) => {
+                          const dotPosition = (bi + 0.5) / step.beats;
+                          const isLit = isActive && barProgress >= dotPosition;
+                          return (
+                            <div
+                              key={bi}
+                              className={cn(
+                                "h-2 w-2 rounded-full transition-all sm:h-2.5 sm:w-2.5",
+                                isActive
+                                  ? isLit ? "bg-white scale-110" : color.dot + " opacity-60"
+                                  : color.dot + " opacity-40"
+                              )}
+                            />
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Lyrics under the bar */}
-                {step.lyrics && (
-                  <div className={cn(
-                    "ml-10 sm:ml-12 mt-0.5 mb-1 text-sm tracking-wide transition-opacity",
-                    isActive ? "text-white font-medium" : isPast ? "text-neutral-600" : "text-neutral-500"
-                  )}>
-                    {step.lyrics}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                  {/* Lyrics under the bar */}
+                  {step.lyrics && (
+                    <div className={cn(
+                      "ml-10 sm:ml-12 mt-0.5 mb-1 text-sm tracking-wide transition-opacity",
+                      isActive ? "text-white font-medium" : isPast ? "text-neutral-600" : "text-neutral-500"
+                    )}>
+                      {step.lyrics}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Large chord diagram sidebar - visible on md+ screens */}
+        <div className="hidden w-48 shrink-0 flex-col items-center justify-center border-l border-neutral-800 bg-neutral-900/60 p-4 md:flex lg:w-56">
+          {/* Chord name */}
+          <div className={cn(
+            "mb-3 rounded-lg px-4 py-1.5 text-center text-2xl font-black tracking-wider",
+            currentColor.text
+          )}>
+            {currentChord}
+          </div>
+          {/* Big chord diagram */}
+          <div className="w-full max-w-[180px]">
+            <ChordDiagram chord={currentChord} />
+          </div>
+          {/* Beat counter */}
+          <div className="mt-4 flex items-center gap-2">
+            {steps[currentIndex] && Array.from({ length: steps[currentIndex].beats }).map((_, bi) => {
+              const dotPosition = (bi + 0.5) / steps[currentIndex].beats;
+              const isLit = barProgress >= dotPosition;
+              return (
+                <div
+                  key={bi}
+                  className={cn(
+                    "h-4 w-4 rounded-full border-2 transition-all",
+                    isLit
+                      ? "border-white bg-white scale-110"
+                      : "border-neutral-600 bg-neutral-800"
+                  )}
+                />
+              );
+            })}
+          </div>
+          <span className="mt-1.5 text-xs text-neutral-500">
+            Beat {Math.min(Math.floor(barProgress * (steps[currentIndex]?.beats || 4)) + 1, steps[currentIndex]?.beats || 4)} of {steps[currentIndex]?.beats || 4}
+          </span>
         </div>
       </div>
+
+      {/* YouTube player embed */}
+      {ytId && (
+        <div className="border-t border-neutral-800 bg-neutral-900/80 px-3 py-3 sm:px-5">
+          <div className="flex items-center gap-3">
+            <div className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Play Along</div>
+            <div className="h-px flex-1 bg-neutral-800" />
+          </div>
+          <div className="mt-2 overflow-hidden rounded-lg" style={{ maxWidth: "100%" }}>
+            <iframe
+              width="100%"
+              height="80"
+              src={`https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`}
+              title="Song audio"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
+              allowFullScreen
+              className="rounded-lg"
+              style={{ border: "none" }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Bottom controls bar */}
       <div className="flex items-center gap-3 border-t border-neutral-800 bg-neutral-900 px-3 py-2.5 sm:px-5">
@@ -430,8 +502,8 @@ export default function ChordProgressionPlayer({
           </button>
         </div>
 
-        {/* Chord diagram - show on right side */}
-        <div className="hidden h-16 w-14 shrink-0 sm:block">
+        {/* Small chord diagram for mobile (hidden on md+ where sidebar shows) */}
+        <div className="h-16 w-14 shrink-0 md:hidden">
           <ChordDiagram chord={currentChord} />
         </div>
       </div>

@@ -961,7 +961,7 @@ const songs: any[] = [
     simplifiedChords:
       "[G]Mama take this [D]badge off of [Am]me\n[G]I can't [D]use it [C]anymore",
     spotifyUrl: "https://open.spotify.com/track/example1",
-    youtubeUrl: "https://youtube.com/watch?v=example1",
+    youtubeUrl: "https://youtube.com/watch?v=2byQEjsb0gg",
   },
   {
     title: "Wonderwall",
@@ -980,7 +980,7 @@ const songs: any[] = [
     simplifiedChords:
       "[Em]Today is [G]gonna be the day that they're\n[D]Gonna throw it back to [A]you",
     spotifyUrl: "https://open.spotify.com/track/example2",
-    youtubeUrl: "https://youtube.com/watch?v=example2",
+    youtubeUrl: "https://youtube.com/watch?v=6hzrDeceEKc",
   },
   {
     title: "Horse With No Name",
@@ -998,7 +998,7 @@ const songs: any[] = [
       "[Em]On the first part of the [D]journey\n[Em]I was looking at all the [D]life\n[Em]There were plants and birds and [D]rocks and things\n[Em]There was sand and hills and [D]rings",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example3",
-    youtubeUrl: "https://youtube.com/watch?v=example3",
+    youtubeUrl: "https://youtube.com/watch?v=na47wMFfQCo",
   },
   {
     title: "Three Little Birds",
@@ -1016,7 +1016,7 @@ const songs: any[] = [
       "[A]Don't worry about a thing\n[A]'Cause every little thing gonna be all [D]right\nSingin' [A]don't worry about a thing\n[A]'Cause every little thing gonna be all [E]right [D] [A]",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example4",
-    youtubeUrl: "https://youtube.com/watch?v=example4",
+    youtubeUrl: "https://youtube.com/watch?v=zaGUr6wButE",
   },
   {
     title: "Love Me Do",
@@ -1034,7 +1034,7 @@ const songs: any[] = [
       "[G]Love, love me [C]do\nYou [G]know I love [C]you\nI'll [G]always be [C]true\nSo [C]please, love me [G]do",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example5",
-    youtubeUrl: "https://youtube.com/watch?v=example5",
+    youtubeUrl: "https://youtube.com/watch?v=0SZcGtj-LJQ",
   },
   {
     title: "Wish You Were Here",
@@ -1053,7 +1053,7 @@ const songs: any[] = [
     simplifiedChords:
       "[C]So, so you think you can [D]tell\nHeaven from [Am]hell, blue skies from [G]pain",
     spotifyUrl: "https://open.spotify.com/track/example6",
-    youtubeUrl: "https://youtube.com/watch?v=example6",
+    youtubeUrl: "https://youtube.com/watch?v=IXdNnw99-Ic",
   },
   {
     title: "Stand By Me",
@@ -1071,7 +1071,7 @@ const songs: any[] = [
       "When the [G]night has come\n[G]And the land is [Em]dark\nAnd the [C]moon is the [D]only light we'll [G]see\nNo I [G]won't be afraid\nOh I [Em]won't be afraid\nJust as [C]long as you [D]stand, stand by [G]me",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example7",
-    youtubeUrl: "https://youtube.com/watch?v=example7",
+    youtubeUrl: "https://youtube.com/watch?v=hwZNL7QVJjE",
   },
   {
     title: "Redemption Song",
@@ -1089,7 +1089,7 @@ const songs: any[] = [
       "[G]Old [Em]pirates yes they [C]rob [D]I\n[G]Sold I to the [Em]merchant [C]ships [D]\n[G]Minutes after [Em]they took [C]I [D]\nFrom the [G]bottomless [Em]pit",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example8",
-    youtubeUrl: "https://youtube.com/watch?v=example8",
+    youtubeUrl: "https://youtube.com/watch?v=QrY9eHkXTa4",
   },
   {
     title: "Hotel California",
@@ -1108,7 +1108,7 @@ const songs: any[] = [
     simplifiedChords:
       "[Am]On a dark desert highway, [E]cool wind in my hair\n[G]Warm smell of colitas, [D]rising up through the air",
     spotifyUrl: "https://open.spotify.com/track/example9",
-    youtubeUrl: "https://youtube.com/watch?v=example9",
+    youtubeUrl: "https://youtube.com/watch?v=09839DpTctU",
   },
   {
     title: "House of the Rising Sun",
@@ -1126,7 +1126,7 @@ const songs: any[] = [
       "[Am]There [C]is a [D]house in [F]New Or[Am]leans\nThey [C]call the [E]Rising Sun\n[Am]And it's [C]been the [D]ruin of [F]many a poor boy\nAnd [Am]God I [E]know I'm [Am]one",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example10",
-    youtubeUrl: "https://youtube.com/watch?v=example10",
+    youtubeUrl: "https://youtube.com/watch?v=0sB3Fcw3fEk",
   },
   {
     title: "Let It Be",
@@ -1144,7 +1144,7 @@ const songs: any[] = [
       "[C]When I find myself in [G]times of trouble\n[Am]Mother Mary [F]comes to me\n[C]Speaking words of [G]wisdom, let it [F]be [C]\n[C]And in my hour of [G]darkness\nShe is [Am]standing right in [F]front of me\n[C]Speaking words of [G]wisdom, let it [F]be [C]",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example11",
-    youtubeUrl: "https://youtube.com/watch?v=example11",
+    youtubeUrl: "https://youtube.com/watch?v=QDYfEBY9NM4",
   },
   {
     title: "Sweet Home Alabama",
@@ -1162,7 +1162,7 @@ const songs: any[] = [
       "[D]Big [C]wheels keep on [G]turning\n[D]Carry me [C]home to see my [G]kin\n[D]Singing [C]songs about the [G]Southland\n[D]I miss [C]Alabamy once [G]again",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example12",
-    youtubeUrl: "https://youtube.com/watch?v=example12",
+    youtubeUrl: "https://youtube.com/watch?v=ye5BuYf8q4o",
   },
   {
     title: "Good Riddance (Time of Your Life)",
@@ -1181,7 +1181,7 @@ const songs: any[] = [
     simplifiedChords:
       "[G]Another turning point, a [C]fork stuck in the [D]road",
     spotifyUrl: "https://open.spotify.com/track/example13",
-    youtubeUrl: "https://youtube.com/watch?v=example13",
+    youtubeUrl: "https://youtube.com/watch?v=CnQ8N1KacJc",
   },
   {
     title: "Hallelujah",
@@ -1199,7 +1199,7 @@ const songs: any[] = [
       "[C]I've heard there was a [Am]secret chord\nThat [C]David played and it [Am]pleased the Lord\nBut [F]you don't really [G]care for music, [C]do ya? [G]\nIt [C]goes like this the [F]fourth the [G]fifth\nThe [Am]minor fall and the [F]major lift\nThe [G]baffled king com[E7]posing halle[Am]lujah",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example14",
-    youtubeUrl: "https://youtube.com/watch?v=example14",
+    youtubeUrl: "https://youtube.com/watch?v=YrLk4vdY28Q",
   },
   {
     title: "Brown Eyed Girl",
@@ -1217,7 +1217,7 @@ const songs: any[] = [
       "[G]Hey where did [C]we go, [G]days when the [D]rains came\n[G]Down in the [C]hollow, [G]playin' a [D]new game\n[G]Laughing and a [C]running, hey hey\n[G]Skipping and a [D]jumping\n[G]In the misty [C]morning fog with\n[G]Our, our [D]hearts a thumpin'",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example15",
-    youtubeUrl: "https://youtube.com/watch?v=example15",
+    youtubeUrl: "https://youtube.com/watch?v=UfmkgQRmmeE",
   },
   {
     title: "Creep",
@@ -1236,7 +1236,7 @@ const songs: any[] = [
     simplifiedChords:
       "[G]When you were here be[D]fore\nCouldn't look you in the [C]eye\nYou're just like an [Am]angel",
     spotifyUrl: "https://open.spotify.com/track/example16",
-    youtubeUrl: "https://youtube.com/watch?v=example16",
+    youtubeUrl: "https://youtube.com/watch?v=XFkzRNyygfk",
   },
   {
     title: "Riptide",
@@ -1254,7 +1254,7 @@ const songs: any[] = [
       "[Am]I was scared of [G]dentists and the [C]dark\n[Am]I was scared of [G]pretty girls and [C]starting conversations\n[Am]Oh, all my [G]friends are turning [C]green\n[Am]You're the ma[G]gician's assis[C]tant in their dreams",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example17",
-    youtubeUrl: "https://youtube.com/watch?v=example17",
+    youtubeUrl: "https://youtube.com/watch?v=RB-RcX5DS5A",
   },
   {
     title: "Free Fallin'",
@@ -1273,7 +1273,7 @@ const songs: any[] = [
     simplifiedChords:
       "[D]She's a good girl, loves her [A]mama\nLoves [D]Jesus and Amer[A]ica too",
     spotifyUrl: "https://open.spotify.com/track/example18",
-    youtubeUrl: "https://youtube.com/watch?v=example18",
+    youtubeUrl: "https://youtube.com/watch?v=1lWJXDG2i0A",
   },
   {
     title: "No Woman No Cry",
@@ -1291,7 +1291,7 @@ const songs: any[] = [
       "[C]No [G]woman no [Am]cry [F]\n[C]No [G]woman no [Am]cry [F]\n[C]Said, said, [G]said I remember [Am]when we used to [F]sit\n[C]In the government [G]yard in [Am]Trenchtown [F]",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example19",
-    youtubeUrl: "https://youtube.com/watch?v=example19",
+    youtubeUrl: "https://youtube.com/watch?v=x59kS2AOrGM",
   },
   {
     title: "Country Roads",
@@ -1309,7 +1309,7 @@ const songs: any[] = [
       "[G]Almost heaven, [Em]West Virginia\n[D]Blue Ridge Mountains, [C]Shenandoah [G]River\n[G]Life is old there, [Em]older than the trees\n[D]Younger than the mountains, [C]growin' like a [G]breeze\n\n[G]Country roads, take me [D]home\nTo the [Em]place I be[C]long\n[G]West Virginia, [D]mountain mama\nTake me [C]home, country [G]roads",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example20",
-    youtubeUrl: "https://youtube.com/watch?v=example20",
+    youtubeUrl: "https://youtube.com/watch?v=1vrEljMfXYo",
   },
   {
     title: "Stairway to Heaven",
@@ -1328,7 +1328,7 @@ const songs: any[] = [
     simplifiedChords:
       "[Am]There's a lady who's [C]sure all that [D]glitters is gold\nAnd she's [G]buying a stairway to [Am]heaven",
     spotifyUrl: "https://open.spotify.com/track/example21",
-    youtubeUrl: "https://youtube.com/watch?v=example21",
+    youtubeUrl: "https://youtube.com/watch?v=QkF3oxziUI4",
   },
   {
     title: "Nothing Else Matters",
@@ -1346,7 +1346,7 @@ const songs: any[] = [
       "[Em]So close no matter [D]how far\n[C]Couldn't be much more [Em]from the heart\n[Em]Forever trusting [D]who we are\n[C]And nothing else [G]mat[B7]ters [Em]",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example22",
-    youtubeUrl: "https://youtube.com/watch?v=example22",
+    youtubeUrl: "https://youtube.com/watch?v=tAGnKpE4NCI",
   },
   {
     title: "Zombie",
@@ -1364,7 +1364,7 @@ const songs: any[] = [
       "[Em]Another [C]head hangs lowly, [G]child is slowly [D]taken\n[Em]And the [C]violence caused such [G]silence, who are [D]we mistaken\n[Em]But you see, [C]it's not me,\nIt's not [G]my family [D]\nIn your [Em]head, in your [C]head they are [G]fighting [D]",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example23",
-    youtubeUrl: "https://youtube.com/watch?v=example23",
+    youtubeUrl: "https://youtube.com/watch?v=6Ejga4kJUts",
   },
   {
     title: "Hey Jude",
@@ -1383,7 +1383,7 @@ const songs: any[] = [
     simplifiedChords:
       "Hey [C]Jude, don't make it [G]bad\nTake a [G]sad song and make it [C]better",
     spotifyUrl: "https://open.spotify.com/track/example24",
-    youtubeUrl: "https://youtube.com/watch?v=example24",
+    youtubeUrl: "https://youtube.com/watch?v=A_MjCqQoLLA",
   },
   {
     title: "Losing My Religion",
@@ -1401,7 +1401,7 @@ const songs: any[] = [
       "[Am]Oh life, is bigger\n[Em]It's bigger than you and you are [Am]not me\nThe lengths that I will [Em]go to\nThe distance in your [Am]eyes\n[Em]Oh no I've [Dm]said too [G]much\nI set it [F]up",
     simplifiedChords: null,
     spotifyUrl: "https://open.spotify.com/track/example25",
-    youtubeUrl: "https://youtube.com/watch?v=example25",
+    youtubeUrl: "https://youtube.com/watch?v=xwtdhWltSIg",
   },
   {
     title: "Mellow Yellow",
