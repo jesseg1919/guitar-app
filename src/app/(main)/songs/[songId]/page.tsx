@@ -215,6 +215,7 @@ export default function SongDetailPage() {
               beats: 4,
             }))}
             defaultBpm={song.bpm}
+            lyricsWithChords={song.lyricsWithChords}
           />
         </div>
       )}
