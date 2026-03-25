@@ -17,8 +17,54 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import ChordProgressionPlayer from "@/components/lessons/ChordProgressionPlayer";
+
+/**
+ * Parse lyricsWithChords like "[D]I'm just mad about [G]Saffron\n..."
+ * into a chord progression array where each chord marker = one bar (4 beats).
+ * Empty lines add a 4-beat rest bar on the previous chord.
+ */
+function parseLyricsToProgression(
+  lyricsWithChords: string
+): { chord: string; beats: number; lyrics?: string }[] {
+  const steps: { chord: string; beats: number; lyrics?: string }[] = [];
+  const lines = lyricsWithChords.split("\n");
+
+  for (const line of lines) {
+    if (!line.trim()) {
+      // Empty line = rest bar, extend last chord by 4 beats
+      if (steps.length > 0) {
+        steps[steps.length - 1].beats += 4;
+      }
+      continue;
+    }
+
+    // Match all [Chord]text pairs
+    const chordRegex = /\[([A-Ga-g][^\]]*)\]/g;
+    let match;
+    const chordPositions: { chord: string; index: number }[] = [];
+
+    while ((match = chordRegex.exec(line)) !== null) {
+      chordPositions.push({ chord: match[1], index: match.index });
+    }
+
+    if (chordPositions.length === 0) continue;
+
+    for (let i = 0; i < chordPositions.length; i++) {
+      const { chord } = chordPositions[i];
+      const startAfterBracket = chordPositions[i].index + chord.length + 2;
+      const endPos =
+        i + 1 < chordPositions.length ? chordPositions[i + 1].index : line.length;
+      const lyrics = line.slice(startAfterBracket, endPos).trim();
+
+      // Each chord marker = one bar = 4 beats
+      steps.push({ chord, beats: 4, lyrics: lyrics || undefined });
+    }
+  }
+
+  return steps;
+}
 
 interface SongDetail {
   id: string;
@@ -211,10 +257,14 @@ export default function SongDetailPage() {
       {song.chordsUsed.length > 0 && song.bpm && (
         <div className="mb-8">
           <ChordProgressionPlayer
-            progression={song.chordsUsed.map((chord) => ({
-              chord,
-              beats: 4,
-            }))}
+            progression={
+              song.lyricsWithChords
+                ? parseLyricsToProgression(song.lyricsWithChords)
+                : song.chordsUsed.map((chord) => ({
+                    chord,
+                    beats: 4,
+                  }))
+            }
             defaultBpm={song.bpm}
             lyricsWithChords={song.lyricsWithChords}
             audioUrl={song.audioUrl}

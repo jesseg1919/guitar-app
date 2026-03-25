@@ -79,16 +79,23 @@ const CHORD_DIAGRAMS: Record<string, { strings: (number | -1 | 0)[]; fingers: nu
 };
 
 // Parse "[C]lyrics text [G]more lyrics" into chord steps with lyrics
+// Each chord marker = one bar (4 beats). Blank lines add a rest bar.
 function parseLyricsWithChords(
   lyricsWithChords: string,
   defaultBeats: number,
-  bpm: number
+  _bpm: number
 ): ChordStep[] {
   const lines = lyricsWithChords.split("\n");
   const steps: ChordStep[] = [];
 
   for (const line of lines) {
-    if (!line.trim()) continue;
+    if (!line.trim()) {
+      // Blank line = rest, extend last chord by 4 beats
+      if (steps.length > 0) {
+        steps[steps.length - 1].beats += 4;
+      }
+      continue;
+    }
 
     // Split by chord markers [X]
     const parts = line.split(/\[([^\]]+)\]/);
@@ -231,48 +238,103 @@ export default function ChordProgressionPlayer({
     } catch { /* Audio not available */ }
   }, []);
 
+  // Pre-compute cumulative beat start times for each step
+  const stepStartBeats = useMemo(() => {
+    const starts: number[] = [];
+    let total = 0;
+    for (const step of steps) {
+      starts.push(total);
+      total += step.beats;
+    }
+    return starts;
+  }, [steps]);
+
   // Animation loop using requestAnimationFrame for smooth bar progress
   const animate = useCallback((timestamp: number) => {
-    if (!lastTimeRef.current) lastTimeRef.current = timestamp;
-    const delta = timestamp - lastTimeRef.current;
-    lastTimeRef.current = timestamp;
+    // If we have audio playing, sync to its currentTime instead of our own timer
+    if (songAudioRef.current && songLoaded && !songAudioRef.current.paused) {
+      const audioTimeSec = songAudioRef.current.currentTime;
+      const audioTimeBeat = audioTimeSec / (60 / bpm); // convert to beat position
 
-    setBarProgress((prev) => {
-      const currentStep = steps[currentIndex];
-      if (!currentStep) return prev;
-      const barDuration = currentStep.beats * msPerBeat;
-      const newProgress = prev + delta / barDuration;
+      // Find which step we should be on based on audio time
+      let targetIdx = 0;
+      for (let i = stepStartBeats.length - 1; i >= 0; i--) {
+        if (audioTimeBeat >= stepStartBeats[i]) {
+          targetIdx = i;
+          break;
+        }
+      }
 
-      // Check if we should play a click
-      const currentBeat = Math.floor(newProgress * currentStep.beats);
-      if (currentBeat !== prevBeatRef.current && currentBeat < currentStep.beats) {
+      const stepBeatOffset = audioTimeBeat - stepStartBeats[targetIdx];
+      const stepBeats = steps[targetIdx]?.beats || 4;
+      const progress = Math.min(stepBeatOffset / stepBeats, 0.999);
+
+      // Check for beat clicks
+      const currentBeat = Math.floor(progress * stepBeats);
+      if (currentBeat !== prevBeatRef.current) {
         prevBeatRef.current = currentBeat;
         playClick(currentBeat === 0);
       }
 
-      if (newProgress >= 1) {
-        // Move to next chord
-        setCurrentIndex((prevIdx) => {
-          const nextIdx = prevIdx + 1;
-          if (nextIdx >= steps.length) {
-            if (isLooping) {
-              prevBeatRef.current = -1;
-              return 0;
-            } else {
-              setIsPlaying(false);
-              return prevIdx;
-            }
-          }
-          prevBeatRef.current = -1;
-          return nextIdx;
-        });
-        return 0;
+      if (targetIdx !== currentIndex) {
+        setCurrentIndex(targetIdx);
       }
-      return newProgress;
-    });
+      setBarProgress(progress);
+
+      // Check if audio ended
+      if (songAudioRef.current.ended) {
+        if (isLooping) {
+          songAudioRef.current.currentTime = 0;
+          songAudioRef.current.play().catch(() => {});
+          setCurrentIndex(0);
+          setBarProgress(0);
+        } else {
+          setIsPlaying(false);
+        }
+      }
+    } else {
+      // No audio — use timer-based progression (original logic)
+      if (!lastTimeRef.current) lastTimeRef.current = timestamp;
+      const delta = timestamp - lastTimeRef.current;
+      lastTimeRef.current = timestamp;
+
+      setBarProgress((prev) => {
+        const currentStep = steps[currentIndex];
+        if (!currentStep) return prev;
+        const barDuration = currentStep.beats * msPerBeat;
+        const newProgress = prev + delta / barDuration;
+
+        // Check if we should play a click
+        const currentBeat = Math.floor(newProgress * currentStep.beats);
+        if (currentBeat !== prevBeatRef.current && currentBeat < currentStep.beats) {
+          prevBeatRef.current = currentBeat;
+          playClick(currentBeat === 0);
+        }
+
+        if (newProgress >= 1) {
+          // Move to next chord
+          setCurrentIndex((prevIdx) => {
+            const nextIdx = prevIdx + 1;
+            if (nextIdx >= steps.length) {
+              if (isLooping) {
+                prevBeatRef.current = -1;
+                return 0;
+              } else {
+                setIsPlaying(false);
+                return prevIdx;
+              }
+            }
+            prevBeatRef.current = -1;
+            return nextIdx;
+          });
+          return 0;
+        }
+        return newProgress;
+      });
+    }
 
     animFrameRef.current = requestAnimationFrame(animate);
-  }, [currentIndex, steps, msPerBeat, isLooping, playClick]);
+  }, [currentIndex, steps, msPerBeat, bpm, isLooping, playClick, songLoaded, stepStartBeats]);
 
   useEffect(() => {
     if (isPlaying) {
