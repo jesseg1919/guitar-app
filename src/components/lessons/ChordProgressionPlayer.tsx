@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { Play, Pause, RotateCcw, Minus, Plus } from "lucide-react";
+import { Play, Pause, RotateCcw, Minus, Plus, Volume2, VolumeX, Music } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ChordStep {
@@ -14,7 +14,7 @@ interface ChordProgressionPlayerProps {
   progression: ChordStep[];
   defaultBpm: number;
   lyricsWithChords?: string;
-  youtubeUrl?: string | null;
+  audioUrl?: string | null;
 }
 
 // Chord colors for the bars
@@ -155,29 +155,54 @@ function ChordDiagram({ chord }: { chord: string }) {
   );
 }
 
-// Extract YouTube video ID from URL
-function getYouTubeId(url: string): string | null {
-  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([a-zA-Z0-9_-]{11})/);
-  return match ? match[1] : null;
-}
-
 export default function ChordProgressionPlayer({
   progression,
   defaultBpm,
   lyricsWithChords,
-  youtubeUrl,
+  audioUrl,
 }: ChordProgressionPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [bpm, setBpm] = useState(defaultBpm);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [barProgress, setBarProgress] = useState(0); // 0 to 1 within current bar
   const [isLooping, setIsLooping] = useState(true);
+  const [songVolume, setSongVolume] = useState(0.7);
+  const [isMuted, setIsMuted] = useState(false);
+  const [songLoaded, setSongLoaded] = useState(false);
+  const [songError, setSongError] = useState(false);
 
   const animFrameRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(0);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevBeatRef = useRef<number>(-1);
+  const songAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Initialize song audio element
+  useEffect(() => {
+    if (audioUrl) {
+      const audio = new Audio(audioUrl);
+      audio.preload = "auto";
+      audio.volume = songVolume;
+      audio.addEventListener("canplaythrough", () => setSongLoaded(true));
+      audio.addEventListener("error", () => setSongError(true));
+      songAudioRef.current = audio;
+      return () => {
+        audio.pause();
+        audio.src = "";
+        songAudioRef.current = null;
+        setSongLoaded(false);
+        setSongError(false);
+      };
+    }
+  }, [audioUrl]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Sync song audio volume
+  useEffect(() => {
+    if (songAudioRef.current) {
+      songAudioRef.current.volume = isMuted ? 0 : songVolume;
+    }
+  }, [songVolume, isMuted]);
 
   // Build the steps - either from parsed lyrics or from plain progression
   const steps = useMemo(() => {
@@ -255,10 +280,18 @@ export default function ChordProgressionPlayer({
       prevBeatRef.current = -1;
       playClick(true);
       animFrameRef.current = requestAnimationFrame(animate);
+      // Start song audio in sync
+      if (songAudioRef.current && songLoaded) {
+        songAudioRef.current.play().catch(() => { /* autoplay blocked */ });
+      }
     } else {
       if (animFrameRef.current) {
         cancelAnimationFrame(animFrameRef.current);
         animFrameRef.current = null;
+      }
+      // Pause song audio
+      if (songAudioRef.current) {
+        songAudioRef.current.pause();
       }
     }
     return () => {
@@ -266,7 +299,7 @@ export default function ChordProgressionPlayer({
         cancelAnimationFrame(animFrameRef.current);
       }
     };
-  }, [isPlaying, animate, playClick]);
+  }, [isPlaying, animate, playClick, songLoaded]);
 
   // Auto-scroll to keep current bar visible
   useEffect(() => {
@@ -283,6 +316,11 @@ export default function ChordProgressionPlayer({
     setCurrentIndex(0);
     setBarProgress(0);
     prevBeatRef.current = -1;
+    // Reset song audio to beginning
+    if (songAudioRef.current) {
+      songAudioRef.current.pause();
+      songAudioRef.current.currentTime = 0;
+    }
   };
 
   const handleBpmChange = (delta: number) => {
@@ -302,8 +340,6 @@ export default function ChordProgressionPlayer({
   const startIdx = Math.max(0, currentIndex - 3);
   const endIdx = Math.min(steps.length, startIdx + VISIBLE_RANGE);
   const visibleSteps = steps.slice(startIdx, endIdx);
-
-  const ytId = youtubeUrl ? getYouTubeId(youtubeUrl) : null;
 
   return (
     <div className="overflow-hidden rounded-xl border border-neutral-800 bg-neutral-950">
@@ -436,25 +472,33 @@ export default function ChordProgressionPlayer({
         </div>
       </div>
 
-      {/* YouTube player embed */}
-      {ytId && (
-        <div className="border-t border-neutral-800 bg-neutral-900/80 px-3 py-3 sm:px-5">
-          <div className="flex items-center gap-3">
-            <div className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Play Along</div>
-            <div className="h-px flex-1 bg-neutral-800" />
-          </div>
-          <div className="mt-2 overflow-hidden rounded-lg" style={{ maxWidth: "100%" }}>
-            <iframe
-              width="100%"
-              height="80"
-              src={`https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`}
-              title="Song audio"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
-              allowFullScreen
-              className="rounded-lg"
-              style={{ border: "none" }}
-            />
-          </div>
+      {/* Song audio controls */}
+      {audioUrl && (
+        <div className="flex items-center gap-3 border-t border-neutral-800 bg-neutral-900/80 px-3 py-2 sm:px-5">
+          <Music className="h-4 w-4 shrink-0 text-amber-500" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+            {songError ? "Audio unavailable" : songLoaded ? "Song ready" : "Loading audio..."}
+          </span>
+          <div className="h-px flex-1 bg-neutral-800" />
+          {/* Volume control */}
+          <button
+            onClick={() => setIsMuted(!isMuted)}
+            className="rounded p-1 text-neutral-400 hover:text-white"
+          >
+            {isMuted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+          </button>
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.05}
+            value={isMuted ? 0 : songVolume}
+            onChange={(e) => {
+              setSongVolume(parseFloat(e.target.value));
+              if (isMuted) setIsMuted(false);
+            }}
+            className="h-1 w-20 cursor-pointer appearance-none rounded-full bg-neutral-700 accent-amber-500 sm:w-24"
+          />
         </div>
       )}
 

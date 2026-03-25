@@ -37,6 +37,7 @@ interface SongDetail {
   simplifiedChords: string | null;
   spotifyUrl: string | null;
   youtubeUrl: string | null;
+  audioUrl: string | null;
   albumArt: string | null;
   isFavorite: boolean;
   relatedSongs: {
@@ -216,7 +217,7 @@ export default function SongDetailPage() {
             }))}
             defaultBpm={song.bpm}
             lyricsWithChords={song.lyricsWithChords}
-            youtubeUrl={song.youtubeUrl}
+            audioUrl={song.audioUrl}
           />
         </div>
       )}

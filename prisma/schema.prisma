@@ -249,6 +249,7 @@ model Song {
   // External links
   spotifyUrl String?
   youtubeUrl String?
+  audioUrl   String?  // Path to MP3 file for synced play-along
 
   // Metadata
   albumArt String?
