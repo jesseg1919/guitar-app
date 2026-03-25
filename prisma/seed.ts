@@ -1420,7 +1420,7 @@ const songs: any[] = [
     simplifiedChords:
       "[A]I'm just mad about [D]Saffron\n[A]Saffron's mad about [E]me\n[A]I'm just mad about [D]Saffron\n[E]She's just mad about [A]me\n\n[A]They call me Mellow [D]Yellow\n[E]Quite rightly\n[A]They call me Mellow [D]Yellow",
     spotifyUrl: "https://open.spotify.com/track/3CxHrSfQzMOJjzFDRkfiXG",
-    youtubeUrl: "https://youtube.com/watch?v=yxEYFeMJce8",
+    youtubeUrl: "https://youtube.com/watch?v=IQNBQI3UDag",
   },
 ];
 
